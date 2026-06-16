@@ -299,6 +299,141 @@
     .footer-inner a { color: var(--body); font-size: 15px; }
     .footer-inner a:hover { color: var(--accent); }
 
+    /* ---------- Announcement bar ---------- */
+    .announce {
+      background: var(--accent);
+      color: #0A0A0A;
+      text-align: center;
+      font-size: 13.5px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      padding: 9px 16px;
+      position: relative;
+      z-index: 60;
+    }
+    .announce strong { font-weight: 700; }
+    .announce .dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #0A0A0A;
+      margin-right: 8px;
+      vertical-align: middle;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.75); }
+    }
+
+    /* ---------- Hero offer badge ---------- */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: rgba(200,255,0,0.08);
+      border: 1px solid rgba(200,255,0,0.35);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      border-radius: 100px;
+      margin-bottom: 30px;
+    }
+    .badge .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+
+    /* ---------- CTA arrow micro-interaction ---------- */
+    .btn-accent .arrow {
+      display: inline-block;
+      margin-left: 8px;
+      transition: transform 0.2s ease;
+    }
+    .btn-accent:hover .arrow { transform: translateX(4px); }
+
+    /* ---------- Card / step hover ---------- */
+    .card {
+      transition: transform 0.25s ease, background 0.25s ease, outline-color 0.25s ease;
+      outline: 1px solid transparent;
+      outline-offset: -1px;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      background: #1f1f1f;
+      outline-color: rgba(200,255,0,0.4);
+    }
+    .step { transition: border-color 0.25s ease; }
+    .step:hover { border-top-color: rgba(200,255,0,0.4); }
+    .step:hover .step-num { transform: translateX(4px); }
+    .step-num { transition: transform 0.25s ease; }
+    .feature-list li { transition: padding-left 0.2s ease, color 0.2s ease; }
+    .feature-list li:hover { padding-left: 8px; }
+
+    /* ---------- Animated heading underline ---------- */
+    .section-head h2 { position: relative; display: inline-block; }
+    .section-head h2::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -14px;
+      height: 3px;
+      width: 0;
+      background: var(--accent);
+      transition: width 0.7s cubic-bezier(0.16,1,0.3,1) 0.15s;
+    }
+    .reveal.in-view .section-head h2::after,
+    .section-head.reveal.in-view h2::after { width: 64px; }
+
+    /* ---------- Discounted pricing ---------- */
+    .price-was {
+      font-size: 16px;
+      color: var(--muted);
+      text-decoration: line-through;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      margin-right: 8px;
+    }
+    .price-note strong { color: var(--accent); font-weight: 700; }
+
+    /* ---------- Scroll reveal ---------- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+      will-change: opacity, transform;
+    }
+    .reveal.in-view { opacity: 1; transform: none; }
+    .reveal[data-delay="1"] { transition-delay: 0.08s; }
+    .reveal[data-delay="2"] { transition-delay: 0.16s; }
+    .reveal[data-delay="3"] { transition-delay: 0.24s; }
+
+    /* Hero entrance (plays on load) */
+    .hero .anim {
+      opacity: 0;
+      transform: translateY(24px);
+      animation: heroIn 0.8s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .hero .anim.d1 { animation-delay: 0.05s; }
+    .hero .anim.d2 { animation-delay: 0.18s; }
+    .hero .anim.d3 { animation-delay: 0.31s; }
+    .hero .anim.d4 { animation-delay: 0.44s; }
+    @keyframes heroIn {
+      to { opacity: 1; transform: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+      .hero .anim { opacity: 1; transform: none; }
+      .section-head h2::after { width: 64px; }
+    }
+
     /* ---------- Responsive ---------- */
     @media (max-width: 860px) {
       section { padding: 88px 0; }
@@ -319,6 +454,12 @@
 </head>
 <body>
 
+  <!-- 0. Announcement bar -->
+  <div class="announce">
+    <span class="dot" aria-hidden="true"></span>
+    <strong>Launch offer:</strong> the first 10 agencies lock in <strong>10% off &mdash; forever.</strong>
+  </div>
+
   <!-- 1. Nav -->
   <nav>
     <div class="container nav-inner">
@@ -330,9 +471,10 @@
   <!-- 2. Hero -->
   <header class="hero">
     <div class="container">
-      <h1>Your agency&rsquo;s knowledge.<br /><span class="line2">Finally organised.</span></h1>
-      <p>We turn your Slack threads, call transcripts and documents into a self-updating AI wiki your whole team can search in seconds.</p>
-      <a href="#how" class="btn btn-accent">See how it works</a>
+      <span class="badge anim d1"><span class="dot" aria-hidden="true"></span> First 10 clients &mdash; 10% off forever</span>
+      <h1 class="anim d2">Your agency&rsquo;s knowledge.<br /><span class="line2">Finally organised.</span></h1>
+      <p class="anim d3">We turn your Slack threads, call transcripts and documents into a self-updating AI wiki your whole team can search in seconds.</p>
+      <a href="#how" class="btn btn-accent anim d4">See how it works<span class="arrow" aria-hidden="true">&rarr;</span></a>
     </div>
   </header>
 
@@ -340,17 +482,17 @@
   <section id="problem">
     <div class="container">
       <div class="cards">
-        <div class="card">
+        <div class="card reveal" data-delay="1">
           <span class="eyebrow">The problem</span>
           <h3>Your knowledge is buried</h3>
           <p>Years of valuable information locked inside Slack, Drive folders and email chains nobody can find.</p>
         </div>
-        <div class="card">
+        <div class="card reveal" data-delay="2">
           <span class="eyebrow">The cost</span>
           <h3>2.5 hours lost every day</h3>
           <p>The average knowledge worker spends 2.5 hours searching for information they already have.</p>
         </div>
-        <div class="card">
+        <div class="card reveal" data-delay="3">
           <span class="eyebrow">The fix</span>
           <h3>AI that organises itself</h3>
           <p>Claude reads your sources, writes your wiki, and keeps it updated. Your team adds files. We handle everything else.</p>
@@ -362,25 +504,25 @@
   <!-- 4. How It Works -->
   <section id="how">
     <div class="container">
-      <div class="section-head">
+      <div class="section-head reveal">
         <h2>Three steps. No maintenance.</h2>
       </div>
       <div class="steps">
-        <div class="step">
+        <div class="step reveal" data-delay="1">
           <div class="step-num">01</div>
           <div>
             <h3>You dump everything</h3>
             <p>Export Slack, download Drive, send transcripts. No organising needed.</p>
           </div>
         </div>
-        <div class="step">
+        <div class="step reveal" data-delay="2">
           <div class="step-num">02</div>
           <div>
             <h3>We build your wiki</h3>
             <p>Claude reads every file and writes an organised, cross-referenced knowledge base tailored to your agency.</p>
           </div>
         </div>
-        <div class="step">
+        <div class="step reveal" data-delay="3">
           <div class="step-num">03</div>
           <div>
             <h3>It compounds forever</h3>
@@ -394,11 +536,11 @@
   <!-- 5. What's Included -->
   <section id="included">
     <div class="container">
-      <div class="section-head">
+      <div class="section-head reveal">
         <h2>Everything you get.</h2>
       </div>
       <div class="included-grid">
-        <ul class="feature-list">
+        <ul class="feature-list reveal">
           <li><span class="check">&#10003;</span> Custom AI schema built for your agency</li>
           <li><span class="check">&#10003;</span> Searchable wiki with full cross-references</li>
           <li><span class="check">&#10003;</span> Private Notion client portal</li>
@@ -406,7 +548,7 @@
           <li><span class="check">&#10003;</span> Monthly report delivered to your portal</li>
           <li><span class="check">&#10003;</span> Contradiction flagging and gap analysis</li>
         </ul>
-        <div class="pricing">
+        <div class="pricing reveal" data-delay="1">
           <div class="price-row">
             <div class="price-label">Setup Fee</div>
             <div class="price-val">&euro;1,500&ndash;&euro;3,000 <small>one-time</small></div>
@@ -415,7 +557,7 @@
             <div class="price-label">Monthly Retainer</div>
             <div class="price-val">&euro;300&ndash;&euro;500<small>/mo</small></div>
           </div>
-          <p class="price-note">First agency clients get priority onboarding.</p>
+          <p class="price-note"><strong>First 10 clients: 10% off setup &amp; retainer &mdash; locked in forever.</strong> Priority onboarding included.</p>
         </div>
       </div>
     </div>
@@ -424,7 +566,7 @@
   <!-- 6. Contact -->
   <section id="contact">
     <div class="container">
-      <div class="contact-wrap">
+      <div class="contact-wrap reveal">
         <div class="section-head" style="margin-bottom:0;">
           <h2>Let&rsquo;s talk.</h2>
           <p style="margin-top:20px;font-size:19px;color:var(--body);">Tell us about your agency. We&rsquo;ll reach out within 24 hours.</p>
@@ -475,6 +617,22 @@
         }
       });
     });
+
+    // Scroll-reveal: fade + lift elements into view as they enter the viewport
+    var revealEls = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+      revealEls.forEach(function (el) { io.observe(el); });
+    } else {
+      revealEls.forEach(function (el) { el.classList.add('in-view'); });
+    }
 
     // Contact form — async submit, no page reload, show success message
     var form = document.getElementById('contact-form');
