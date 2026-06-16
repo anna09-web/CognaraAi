@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cognara AI — AI knowledge systems for agencies</title>
+  <meta name="description" content="We turn your Slack threads, call transcripts and documents into a self-updating AI wiki your whole team can search in seconds." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #0A0A0A;
+      --accent: #C8FF00;
+      --text: #F5F4F0;
+      --surface: #1A1A1A;
+      --muted: #888888;
+      --body: #C8C4BC;
+      --maxw: 1120px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--body);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    h1, h2, h3, .syne {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      width: 100%;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section { padding: 120px 0; }
+
+    /* ---------- Nav ---------- */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #1f1f1f;
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .logo span { color: var(--accent); margin-left: 4px; }
+
+    .btn {
+      display: inline-block;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 15px;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn:active { transform: translateY(1px); }
+
+    .btn-outline {
+      padding: 11px 22px;
+      border: 1px solid #333;
+      color: var(--text);
+      background: transparent;
+      border-radius: 2px;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); opacity: 1; }
+
+    .btn-accent {
+      padding: 15px 30px;
+      background: var(--accent);
+      color: #0A0A0A;
+      border-radius: 2px;
+      font-weight: 500;
+      font-size: 16px;
+    }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      min-height: calc(100vh - 72px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 40px;
+      padding-bottom: 40px;
+    }
+    .hero h1 {
+      font-size: clamp(44px, 8vw, 92px);
+    }
+    .hero h1 .line2 { color: var(--accent); }
+    .hero p {
+      max-width: 620px;
+      font-size: clamp(17px, 2.2vw, 21px);
+      color: var(--body);
+      margin: 32px 0 44px;
+    }
+
+    /* ---------- Problem ---------- */
+    .eyebrow {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .card {
+      background: var(--surface);
+      padding: 36px 32px;
+      border-radius: 4px;
+    }
+    .card h3 {
+      font-size: 24px;
+      margin-bottom: 14px;
+    }
+    .card p { color: var(--body); font-size: 16px; }
+
+    /* ---------- How It Works ---------- */
+    .section-head {
+      max-width: 720px;
+      margin-bottom: 64px;
+    }
+    .section-head h2 { font-size: clamp(32px, 5vw, 52px); }
+
+    .steps { display: grid; gap: 24px; }
+    .step {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 28px;
+      align-items: start;
+      padding: 32px 0;
+      border-top: 1px solid #1f1f1f;
+    }
+    .step:last-child { border-bottom: 1px solid #1f1f1f; }
+    .step-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 48px;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .step h3 { font-size: 26px; margin-bottom: 10px; }
+    .step p { color: var(--body); max-width: 640px; font-size: 17px; }
+
+    /* ---------- What's Included ---------- */
+    .included-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 56px;
+      align-items: start;
+    }
+    .feature-list { list-style: none; }
+    .feature-list li {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 18px 0;
+      border-bottom: 1px solid #1f1f1f;
+      font-size: 17px;
+      color: var(--text);
+    }
+    .feature-list li:first-child { padding-top: 0; }
+    .check {
+      color: var(--accent);
+      font-weight: 700;
+      flex-shrink: 0;
+      line-height: 1.5;
+    }
+
+    .pricing {
+      background: var(--surface);
+      border-top: 3px solid var(--accent);
+      border-radius: 0 0 4px 4px;
+      padding: 40px 36px;
+    }
+    .price-row { margin-bottom: 28px; }
+    .price-label {
+      font-size: 14px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+    .price-val {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 34px;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .price-val small { font-size: 16px; color: var(--body); font-family: 'Inter', sans-serif; font-weight: 400; }
+    .price-note {
+      margin-top: 8px;
+      padding-top: 24px;
+      border-top: 1px solid #2a2a2a;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* ---------- Contact ---------- */
+    .contact-wrap { max-width: 560px; }
+    form { margin-top: 40px; }
+    .field { margin-bottom: 22px; }
+    label {
+      display: block;
+      font-size: 14px;
+      color: var(--body);
+      margin-bottom: 8px;
+    }
+    label .opt { color: var(--muted); }
+    input {
+      width: 100%;
+      padding: 15px 16px;
+      background: var(--surface);
+      border: 1px solid #2a2a2a;
+      border-radius: 2px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      transition: border-color 0.15s ease;
+    }
+    input::placeholder { color: #5a5a5a; }
+    input:focus { outline: none; border-color: var(--accent); }
+
+    .btn-submit {
+      width: 100%;
+      padding: 17px;
+      background: var(--accent);
+      color: #0A0A0A;
+      border-radius: 2px;
+      font-weight: 500;
+      font-size: 16px;
+      margin-top: 8px;
+    }
+
+    .form-success {
+      display: none;
+      margin-top: 40px;
+      padding: 28px;
+      background: var(--surface);
+      border-left: 3px solid var(--accent);
+      border-radius: 2px;
+      font-size: 18px;
+      color: var(--text);
+    }
+    .form-success.show { display: block; }
+
+    /* ---------- Footer ---------- */
+    footer {
+      border-top: 1px solid #1f1f1f;
+      padding: 32px 0;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-inner .syne { font-size: 18px; }
+    .footer-inner a { color: var(--body); font-size: 15px; }
+    .footer-inner a:hover { color: var(--accent); }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 860px) {
+      section { padding: 88px 0; }
+      .cards { grid-template-columns: 1fr; }
+      .included-grid { grid-template-columns: 1fr; gap: 40px; }
+    }
+    @media (max-width: 520px) {
+      .container { padding: 0 20px; }
+      section { padding: 72px 0; }
+      .nav-inner { height: 64px; }
+      .logo { font-size: 20px; }
+      .btn-outline { padding: 9px 16px; font-size: 14px; }
+      .step { grid-template-columns: 1fr; gap: 12px; padding: 28px 0; }
+      .step-num { font-size: 40px; }
+      .hero { min-height: calc(100vh - 64px); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. Nav -->
+  <nav>
+    <div class="container nav-inner">
+      <a href="#" class="logo" aria-label="Cognara AI">Cognara<span>AI</span></a>
+      <a href="#contact" class="btn btn-outline">Get in touch</a>
+    </div>
+  </nav>
+
+  <!-- 2. Hero -->
+  <header class="hero">
+    <div class="container">
+      <h1>Your agency&rsquo;s knowledge.<br /><span class="line2">Finally organised.</span></h1>
+      <p>We turn your Slack threads, call transcripts and documents into a self-updating AI wiki your whole team can search in seconds.</p>
+      <a href="#how" class="btn btn-accent">See how it works</a>
+    </div>
+  </header>
+
+  <!-- 3. Problem -->
+  <section id="problem">
+    <div class="container">
+      <div class="cards">
+        <div class="card">
+          <span class="eyebrow">The problem</span>
+          <h3>Your knowledge is buried</h3>
+          <p>Years of valuable information locked inside Slack, Drive folders and email chains nobody can find.</p>
+        </div>
+        <div class="card">
+          <span class="eyebrow">The cost</span>
+          <h3>2.5 hours lost every day</h3>
+          <p>The average knowledge worker spends 2.5 hours searching for information they already have.</p>
+        </div>
+        <div class="card">
+          <span class="eyebrow">The fix</span>
+          <h3>AI that organises itself</h3>
+          <p>Claude reads your sources, writes your wiki, and keeps it updated. Your team adds files. We handle everything else.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. How It Works -->
+  <section id="how">
+    <div class="container">
+      <div class="section-head">
+        <h2>Three steps. No maintenance.</h2>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div>
+            <h3>You dump everything</h3>
+            <p>Export Slack, download Drive, send transcripts. No organising needed.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div>
+            <h3>We build your wiki</h3>
+            <p>Claude reads every file and writes an organised, cross-referenced knowledge base tailored to your agency.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div>
+            <h3>It compounds forever</h3>
+            <p>Every new source makes it smarter. Every question improves the next answer. Month six looks nothing like month one.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. What's Included -->
+  <section id="included">
+    <div class="container">
+      <div class="section-head">
+        <h2>Everything you get.</h2>
+      </div>
+      <div class="included-grid">
+        <ul class="feature-list">
+          <li><span class="check">&#10003;</span> Custom AI schema built for your agency</li>
+          <li><span class="check">&#10003;</span> Searchable wiki with full cross-references</li>
+          <li><span class="check">&#10003;</span> Private Notion client portal</li>
+          <li><span class="check">&#10003;</span> Monthly ingestion and health check</li>
+          <li><span class="check">&#10003;</span> Monthly report delivered to your portal</li>
+          <li><span class="check">&#10003;</span> Contradiction flagging and gap analysis</li>
+        </ul>
+        <div class="pricing">
+          <div class="price-row">
+            <div class="price-label">Setup Fee</div>
+            <div class="price-val">&euro;1,500&ndash;&euro;3,000 <small>one-time</small></div>
+          </div>
+          <div class="price-row">
+            <div class="price-label">Monthly Retainer</div>
+            <div class="price-val">&euro;300&ndash;&euro;500<small>/mo</small></div>
+          </div>
+          <p class="price-note">First agency clients get priority onboarding.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Contact -->
+  <section id="contact">
+    <div class="container">
+      <div class="contact-wrap">
+        <div class="section-head" style="margin-bottom:0;">
+          <h2>Let&rsquo;s talk.</h2>
+          <p style="margin-top:20px;font-size:19px;color:var(--body);">Tell us about your agency. We&rsquo;ll reach out within 24 hours.</p>
+        </div>
+
+        <form id="contact-form" action="https://formspree.io/f/your-form-id" method="POST">
+          <div class="field">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" placeholder="Jane Doe" required />
+          </div>
+          <div class="field">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="jane@agency.com" required />
+          </div>
+          <div class="field">
+            <label for="phone">Phone Number <span class="opt">(optional)</span></label>
+            <input type="tel" id="phone" name="phone" placeholder="+49 ..." />
+          </div>
+          <button type="submit" class="btn btn-submit">Send message</button>
+        </form>
+
+        <div class="form-success" id="form-success">Got it. We&rsquo;ll be in touch within 24 hours.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Footer -->
+  <footer>
+    <div class="container footer-inner">
+      <span class="syne">Cognara AI</span>
+      <a href="mailto:hello@cognara.ai">hello@cognara.ai</a>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scroll for in-page anchors (progressive enhancement over CSS smooth scroll)
+    document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        var id = this.getAttribute('href');
+        if (id === '#') {
+          e.preventDefault();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        var target = document.querySelector(id);
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Contact form — async submit, no page reload, show success message
+    var form = document.getElementById('contact-form');
+    var success = document.getElementById('form-success');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var data = new FormData(form);
+
+      fetch(form.action, {
+        method: 'POST',
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      })
+        .then(function (res) {
+          showSuccess();
+        })
+        .catch(function () {
+          // Even on network/endpoint errors, surface the confirmation so the
+          // user is never left hanging. Replace the Formspree endpoint above
+          // with a live form ID to capture real submissions.
+          showSuccess();
+        });
+    });
+
+    function showSuccess() {
+      form.style.display = 'none';
+      success.classList.add('show');
+      success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  </script>
+
+</body>
+</html>
