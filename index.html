@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cognara AI — AI knowledge systems for agencies</title>
+  <meta name="description" content="We turn your Slack threads, call transcripts and documents into a self-updating AI wiki your whole team can search in seconds." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --bg: #0A0A0A;
+      --accent: #C8FF00;
+      --text: #F5F4F0;
+      --surface: #1A1A1A;
+      --muted: #888888;
+      --body: #C8C4BC;
+      --maxw: 1120px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--body);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-weight: 400;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    h1, h2, h3, .syne {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    .container {
+      width: 100%;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section { padding: 120px 0; }
+
+    /* ---------- Nav ---------- */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(10,10,10,0.85);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid #1f1f1f;
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 22px;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .logo span { color: var(--accent); margin-left: 4px; }
+
+    .btn {
+      display: inline-block;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 15px;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn:active { transform: translateY(1px); }
+
+    .btn-outline {
+      padding: 11px 22px;
+      border: 1px solid #333;
+      color: var(--text);
+      background: transparent;
+      border-radius: 2px;
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); opacity: 1; }
+
+    .btn-accent {
+      padding: 15px 30px;
+      background: var(--accent);
+      color: #0A0A0A;
+      border-radius: 2px;
+      font-weight: 500;
+      font-size: 16px;
+    }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      min-height: calc(100vh - 72px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 40px;
+      padding-bottom: 40px;
+    }
+    .hero h1 {
+      font-size: clamp(44px, 8vw, 92px);
+    }
+    .hero h1 .line2 { color: var(--accent); }
+    .hero p {
+      max-width: 620px;
+      font-size: clamp(17px, 2.2vw, 21px);
+      color: var(--body);
+      margin: 32px 0 44px;
+    }
+
+    /* ---------- Problem ---------- */
+    .eyebrow {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .card {
+      background: var(--surface);
+      padding: 36px 32px;
+      border-radius: 4px;
+    }
+    .card h3 {
+      font-size: 24px;
+      margin-bottom: 14px;
+    }
+    .card p { color: var(--body); font-size: 16px; }
+
+    /* ---------- How It Works ---------- */
+    .section-head {
+      max-width: 720px;
+      margin-bottom: 64px;
+    }
+    .section-head h2 { font-size: clamp(32px, 5vw, 52px); }
+
+    .steps { display: grid; gap: 24px; }
+    .step {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 28px;
+      align-items: start;
+      padding: 32px 0;
+      border-top: 1px solid #1f1f1f;
+    }
+    .step:last-child { border-bottom: 1px solid #1f1f1f; }
+    .step-num {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 48px;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .step h3 { font-size: 26px; margin-bottom: 10px; }
+    .step p { color: var(--body); max-width: 640px; font-size: 17px; }
+
+    /* ---------- What's Included ---------- */
+    .included-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 56px;
+      align-items: start;
+    }
+    .feature-list { list-style: none; }
+    .feature-list li {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 18px 0;
+      border-bottom: 1px solid #1f1f1f;
+      font-size: 17px;
+      color: var(--text);
+    }
+    .feature-list li:first-child { padding-top: 0; }
+    .check {
+      color: var(--accent);
+      font-weight: 700;
+      flex-shrink: 0;
+      line-height: 1.5;
+    }
+
+    .pricing {
+      background: var(--surface);
+      border-top: 3px solid var(--accent);
+      border-radius: 0 0 4px 4px;
+      padding: 40px 36px;
+    }
+    .price-row { margin-bottom: 28px; }
+    .price-label {
+      font-size: 14px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+    .price-val {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 34px;
+      color: var(--text);
+      letter-spacing: -0.02em;
+    }
+    .price-val small { font-size: 16px; color: var(--body); font-family: 'Inter', sans-serif; font-weight: 400; }
+    .price-note {
+      margin-top: 8px;
+      padding-top: 24px;
+      border-top: 1px solid #2a2a2a;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    /* ---------- Contact ---------- */
+    .contact-wrap { max-width: 560px; }
+    form { margin-top: 40px; }
+    .field { margin-bottom: 22px; }
+    label {
+      display: block;
+      font-size: 14px;
+      color: var(--body);
+      margin-bottom: 8px;
+    }
+    label .opt { color: var(--muted); }
+    input {
+      width: 100%;
+      padding: 15px 16px;
+      background: var(--surface);
+      border: 1px solid #2a2a2a;
+      border-radius: 2px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      transition: border-color 0.15s ease;
+    }
+    input::placeholder { color: #5a5a5a; }
+    input:focus { outline: none; border-color: var(--accent); }
+
+    .btn-submit {
+      width: 100%;
+      padding: 17px;
+      background: var(--accent);
+      color: #0A0A0A;
+      border-radius: 2px;
+      font-weight: 500;
+      font-size: 16px;
+      margin-top: 8px;
+    }
+
+    .form-success {
+      display: none;
+      margin-top: 40px;
+      padding: 28px;
+      background: var(--surface);
+      border-left: 3px solid var(--accent);
+      border-radius: 2px;
+      font-size: 18px;
+      color: var(--text);
+    }
+    .form-success.show { display: block; }
+
+    .form-error {
+      display: none;
+      margin-top: 16px;
+      padding: 14px 16px;
+      background: rgba(255,80,80,0.08);
+      border: 1px solid rgba(255,80,80,0.4);
+      border-radius: 2px;
+      font-size: 15px;
+      color: #ff9a9a;
+    }
+    .form-error.show { display: block; }
+
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+    /* ---------- Footer ---------- */
+    footer {
+      border-top: 1px solid #1f1f1f;
+      padding: 32px 0;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-inner .syne { font-size: 18px; }
+    .footer-inner a { color: var(--body); font-size: 15px; }
+    .footer-inner a:hover { color: var(--accent); }
+
+    /* ---------- Announcement bar ---------- */
+    .announce {
+      background: var(--accent);
+      color: #0A0A0A;
+      text-align: center;
+      font-size: 13.5px;
+      font-weight: 500;
+      letter-spacing: 0.01em;
+      padding: 9px 16px;
+      position: relative;
+      z-index: 60;
+    }
+    .announce strong { font-weight: 700; }
+    .announce .dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #0A0A0A;
+      margin-right: 8px;
+      vertical-align: middle;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.75); }
+    }
+
+    /* ---------- Hero offer badge ---------- */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: rgba(200,255,0,0.08);
+      border: 1px solid rgba(200,255,0,0.35);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      border-radius: 100px;
+      margin-bottom: 30px;
+    }
+    .badge .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent);
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+
+    /* ---------- CTA arrow micro-interaction ---------- */
+    .btn-accent .arrow {
+      display: inline-block;
+      margin-left: 8px;
+      transition: transform 0.2s ease;
+    }
+    .btn-accent:hover .arrow { transform: translateX(4px); }
+
+    /* ---------- Card / step hover ---------- */
+    .card {
+      transition: transform 0.25s ease, background 0.25s ease, outline-color 0.25s ease;
+      outline: 1px solid transparent;
+      outline-offset: -1px;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      background: #1f1f1f;
+      outline-color: rgba(200,255,0,0.4);
+    }
+    .step { transition: border-color 0.25s ease; }
+    .step:hover { border-top-color: rgba(200,255,0,0.4); }
+    .step:hover .step-num { transform: translateX(4px); }
+    .step-num { transition: transform 0.25s ease; }
+    .feature-list li { transition: padding-left 0.2s ease, color 0.2s ease; }
+    .feature-list li:hover { padding-left: 8px; }
+
+    /* ---------- Animated heading underline ---------- */
+    .section-head h2 { position: relative; display: inline-block; }
+    .section-head h2::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -14px;
+      height: 3px;
+      width: 0;
+      background: var(--accent);
+      transition: width 0.7s cubic-bezier(0.16,1,0.3,1) 0.15s;
+    }
+    .reveal.in-view .section-head h2::after,
+    .section-head.reveal.in-view h2::after { width: 64px; }
+
+    /* ---------- Discounted pricing ---------- */
+    .price-was {
+      font-size: 16px;
+      color: var(--muted);
+      text-decoration: line-through;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      margin-right: 8px;
+    }
+    .price-note strong { color: var(--accent); font-weight: 700; }
+
+    /* ---------- Scroll reveal ---------- */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1);
+      will-change: opacity, transform;
+    }
+    .reveal.in-view { opacity: 1; transform: none; }
+    .reveal[data-delay="1"] { transition-delay: 0.08s; }
+    .reveal[data-delay="2"] { transition-delay: 0.16s; }
+    .reveal[data-delay="3"] { transition-delay: 0.24s; }
+
+    /* Hero entrance (plays on load) */
+    .hero .anim {
+      opacity: 0;
+      transform: translateY(24px);
+      animation: heroIn 0.8s cubic-bezier(0.16,1,0.3,1) forwards;
+    }
+    .hero .anim.d1 { animation-delay: 0.05s; }
+    .hero .anim.d2 { animation-delay: 0.18s; }
+    .hero .anim.d3 { animation-delay: 0.31s; }
+    .hero .anim.d4 { animation-delay: 0.44s; }
+    @keyframes heroIn {
+      to { opacity: 1; transform: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::after { animation: none !important; transition: none !important; }
+      .reveal { opacity: 1; transform: none; }
+      .hero .anim { opacity: 1; transform: none; }
+      .section-head h2::after { width: 64px; }
+      .marquee-track { animation: none !important; }
+    }
+
+    /* ---------- Scroll progress bar ---------- */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0;
+      background: var(--accent);
+      z-index: 100;
+      transition: width 0.1s linear;
+    }
+
+    /* ---------- Sources marquee ---------- */
+    .marquee {
+      border-top: 1px solid #1f1f1f;
+      border-bottom: 1px solid #1f1f1f;
+      padding: 26px 0;
+      overflow: hidden;
+      position: relative;
+    }
+    .marquee::before, .marquee::after {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 120px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .marquee::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
+    .marquee::after { right: 0; background: linear-gradient(270deg, var(--bg), transparent); }
+    .marquee-label {
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .marquee-track {
+      display: flex;
+      gap: 56px;
+      width: max-content;
+      animation: scroll-x 32s linear infinite;
+    }
+    .marquee:hover .marquee-track { animation-play-state: paused; }
+    .marquee-item {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(20px, 3vw, 28px);
+      color: #2e2e2e;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      transition: color 0.2s ease;
+    }
+    .marquee-item:hover { color: var(--accent); }
+    @keyframes scroll-x {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* ---------- Count-up stat ---------- */
+    .count { font-variant-numeric: tabular-nums; }
+
+    /* ---------- FAQ accordion ---------- */
+    .faq-list {
+      max-width: 820px;
+      border-top: 1px solid #1f1f1f;
+    }
+    .faq-item { border-bottom: 1px solid #1f1f1f; }
+    .faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      text-align: left;
+      padding: 26px 4px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(18px, 2.4vw, 22px);
+      color: var(--text);
+      letter-spacing: -0.01em;
+      transition: color 0.2s ease;
+    }
+    .faq-q:hover { color: var(--accent); }
+    .faq-icon {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      position: relative;
+    }
+    .faq-icon::before, .faq-icon::after {
+      content: "";
+      position: absolute;
+      background: var(--accent);
+      transition: transform 0.3s ease;
+    }
+    .faq-icon::before { top: 50%; left: 0; width: 100%; height: 2px; transform: translateY(-50%); }
+    .faq-icon::after { left: 50%; top: 0; width: 2px; height: 100%; transform: translateX(-50%); }
+    .faq-item.open .faq-icon::after { transform: translateX(-50%) scaleY(0); }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+    .faq-a p {
+      padding: 0 4px 26px;
+      color: var(--body);
+      font-size: 17px;
+      max-width: 680px;
+    }
+
+    /* ---------- Back to top ---------- */
+    .to-top {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: 46px; height: 46px;
+      background: var(--accent);
+      color: #0A0A0A;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(12px);
+      transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+      z-index: 70;
+    }
+    .to-top.show { opacity: 1; visibility: visible; transform: none; }
+    .to-top:hover { transform: translateY(-3px); }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 860px) {
+      section { padding: 88px 0; }
+      .cards { grid-template-columns: 1fr; }
+      .included-grid { grid-template-columns: 1fr; gap: 40px; }
+    }
+    @media (max-width: 520px) {
+      .container { padding: 0 20px; }
+      section { padding: 72px 0; }
+      .nav-inner { height: 64px; }
+      .logo { font-size: 20px; }
+      .btn-outline { padding: 9px 16px; font-size: 14px; }
+      .step { grid-template-columns: 1fr; gap: 12px; padding: 28px 0; }
+      .step-num { font-size: 40px; }
+      .hero { min-height: calc(100vh - 64px); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Scroll progress indicator -->
+  <div class="scroll-progress" id="scroll-progress"></div>
+
+  <!-- 0. Announcement bar -->
+  <div class="announce">
+    <span class="dot" aria-hidden="true"></span>
+    <strong>Launch offer:</strong> the first 10 agencies lock in <strong>10% off &mdash; forever.</strong>
+  </div>
+
+  <!-- 1. Nav -->
+  <nav>
+    <div class="container nav-inner">
+      <a href="#" class="logo" aria-label="Cognara AI">Cognara<span>AI</span></a>
+      <a href="#contact" class="btn btn-outline">Get in touch</a>
+    </div>
+  </nav>
+
+  <!-- 2. Hero -->
+  <header class="hero">
+    <div class="container">
+      <span class="badge anim d1"><span class="dot" aria-hidden="true"></span> First 10 clients &mdash; 10% off forever</span>
+      <h1 class="anim d2">Your agency&rsquo;s knowledge.<br /><span class="line2">Finally organised.</span></h1>
+      <p class="anim d3">We turn your Slack threads, call transcripts and documents into a self-updating AI wiki your whole team can search in seconds.</p>
+      <a href="#how" class="btn btn-accent anim d4">See how it works<span class="arrow" aria-hidden="true">&rarr;</span></a>
+    </div>
+  </header>
+
+  <!-- 2b. Sources marquee -->
+  <div class="marquee reveal" aria-hidden="true">
+    <p class="marquee-label">Every source your team already uses</p>
+    <div class="marquee-track" id="marquee-track">
+      <span class="marquee-item">Slack</span>
+      <span class="marquee-item">Google Drive</span>
+      <span class="marquee-item">Notion</span>
+      <span class="marquee-item">Zoom</span>
+      <span class="marquee-item">Gmail</span>
+      <span class="marquee-item">Fathom</span>
+      <span class="marquee-item">Otter.ai</span>
+      <span class="marquee-item">Dropbox</span>
+      <span class="marquee-item">Confluence</span>
+      <span class="marquee-item">Loom</span>
+    </div>
+  </div>
+
+  <!-- 3. Problem -->
+  <section id="problem">
+    <div class="container">
+      <div class="cards">
+        <div class="card reveal" data-delay="1">
+          <span class="eyebrow">The problem</span>
+          <h3>Your knowledge is buried</h3>
+          <p>Years of valuable information locked inside Slack, Drive folders and email chains nobody can find.</p>
+        </div>
+        <div class="card reveal" data-delay="2">
+          <span class="eyebrow">The cost</span>
+          <h3><span class="count" data-count="2.5" data-decimals="1">0.0</span> hours lost every day</h3>
+          <p>The average knowledge worker spends 2.5 hours searching for information they already have.</p>
+        </div>
+        <div class="card reveal" data-delay="3">
+          <span class="eyebrow">The fix</span>
+          <h3>AI that organises itself</h3>
+          <p>Claude reads your sources, writes your wiki, and keeps it updated. Your team adds files. We handle everything else.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. How It Works -->
+  <section id="how">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>Three steps. No maintenance.</h2>
+      </div>
+      <div class="steps">
+        <div class="step reveal" data-delay="1">
+          <div class="step-num">01</div>
+          <div>
+            <h3>You dump everything</h3>
+            <p>Export Slack, download Drive, send transcripts. No organising needed.</p>
+          </div>
+        </div>
+        <div class="step reveal" data-delay="2">
+          <div class="step-num">02</div>
+          <div>
+            <h3>We build your wiki</h3>
+            <p>Claude reads every file and writes an organised, cross-referenced knowledge base tailored to your agency.</p>
+          </div>
+        </div>
+        <div class="step reveal" data-delay="3">
+          <div class="step-num">03</div>
+          <div>
+            <h3>It compounds forever</h3>
+            <p>Every new source makes it smarter. Every question improves the next answer. Month six looks nothing like month one.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. What's Included -->
+  <section id="included">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>Everything you get.</h2>
+      </div>
+      <div class="included-grid">
+        <ul class="feature-list reveal">
+          <li><span class="check">&#10003;</span> Custom AI schema built for your agency</li>
+          <li><span class="check">&#10003;</span> Searchable wiki with full cross-references</li>
+          <li><span class="check">&#10003;</span> Private Notion client portal</li>
+          <li><span class="check">&#10003;</span> Monthly ingestion and health check</li>
+          <li><span class="check">&#10003;</span> Monthly report delivered to your portal</li>
+          <li><span class="check">&#10003;</span> Contradiction flagging and gap analysis</li>
+        </ul>
+        <div class="pricing reveal" data-delay="1">
+          <div class="price-row">
+            <div class="price-label">Setup Fee</div>
+            <div class="price-val">&euro;1,500&ndash;&euro;3,000 <small>one-time</small></div>
+          </div>
+          <div class="price-row">
+            <div class="price-label">Monthly Retainer</div>
+            <div class="price-val">&euro;300&ndash;&euro;500<small>/mo</small></div>
+          </div>
+          <p class="price-note"><strong>First 10 clients: 10% off setup &amp; retainer &mdash; locked in forever.</strong> Priority onboarding included.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5b. How we work / guarantees -->
+  <section id="guarantees">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>How we work.</h2>
+      </div>
+      <div class="cards">
+        <div class="card reveal" data-delay="1">
+          <span class="eyebrow">Response</span>
+          <h3>Reply within 24 hours</h3>
+          <p>Every enquiry gets a real answer within one business day. No black holes, no chasing.</p>
+        </div>
+        <div class="card reveal" data-delay="2">
+          <span class="eyebrow">Privacy</span>
+          <h3>Your data stays yours</h3>
+          <p>A private, isolated knowledge base per client. Never shared, never used to train public models.</p>
+        </div>
+        <div class="card reveal" data-delay="3">
+          <span class="eyebrow">Commitment</span>
+          <h3>No long contracts</h3>
+          <p>Month-to-month retainer. Cancel any time and keep a full export of your wiki.</p>
+        </div>
+        <div class="card reveal" data-delay="1">
+          <span class="eyebrow">Pricing</span>
+          <h3>Fixed and transparent</h3>
+          <p>One setup fee, one monthly retainer. No hidden add-ons and no surprise invoices.</p>
+        </div>
+        <div class="card reveal" data-delay="2">
+          <span class="eyebrow">Effort</span>
+          <h3>Zero maintenance for you</h3>
+          <p>You add files. We handle ingestion, structure and upkeep &mdash; every month, automatically.</p>
+        </div>
+        <div class="card reveal" data-delay="3">
+          <span class="eyebrow">Technology</span>
+          <h3>Built on Claude</h3>
+          <p>Best-in-class AI reads your sources and writes a cross-referenced knowledge base that keeps improving.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5c. FAQ -->
+  <section id="faq">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>Questions, answered.</h2>
+      </div>
+      <div class="faq-list reveal">
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false">
+            How long until our wiki is live?
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-a"><p>Most agencies are up and running within two weeks of sending us their first batch of sources. The wiki keeps improving from there as you add more.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false">
+            Is our data secure and private?
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-a"><p>Every client gets a private, isolated knowledge base. Your data is never shared, never used to train public models, and access stays inside your own Notion portal.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false">
+            What do we actually have to do?
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-a"><p>Dump your files &mdash; export Slack, share Drive folders, send transcripts. No tagging, no folders, no organising. We handle the structure and the upkeep.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false">
+            What does it cost?
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-a"><p>A one-time setup fee of &euro;1,500&ndash;&euro;3,000 and a monthly retainer of &euro;300&ndash;&euro;500. The first 10 agencies lock in 10% off both &mdash; forever.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Contact -->
+  <section id="contact">
+    <div class="container">
+      <div class="contact-wrap reveal">
+        <div class="section-head" style="margin-bottom:0;">
+          <h2>Let&rsquo;s talk.</h2>
+          <p style="margin-top:20px;font-size:19px;color:var(--body);">Tell us about your agency. We&rsquo;ll reach out within 24 hours.</p>
+        </div>
+
+        <form id="contact-form" action="https://formspree.io/f/mrevdlvl" method="POST">
+          <div class="field">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" placeholder="Jane Doe" required />
+          </div>
+          <div class="field">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="jane@agency.com" required />
+          </div>
+          <div class="field">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="+49 ..." required />
+          </div>
+          <button type="submit" class="btn btn-submit">Send message</button>
+        </form>
+
+        <div class="form-error" id="form-error" role="alert"></div>
+        <div class="form-success" id="form-success">Got it. We&rsquo;ll be in touch within 24 hours.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Footer -->
+  <footer>
+    <div class="container footer-inner">
+      <span class="syne">Cognara AI</span>
+    </div>
+  </footer>
+
+  <!-- Back to top -->
+  <button class="to-top" id="to-top" type="button" aria-label="Back to top">&uarr;</button>
+
+  <script>
+    // Smooth scroll for in-page anchors (progressive enhancement over CSS smooth scroll)
+    document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+      link.addEventListener('click', function (e) {
+        var id = this.getAttribute('href');
+        if (id === '#') {
+          e.preventDefault();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+        var target = document.querySelector(id);
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Scroll progress bar — width tracks how far down the page you are
+    var progress = document.getElementById('scroll-progress');
+    function updateProgress() {
+      var h = document.documentElement;
+      var scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
+      progress.style.width = (scrolled * 100) + '%';
+    }
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+
+    // Marquee — duplicate the items so the loop is seamless (-50% keyframe)
+    var track = document.getElementById('marquee-track');
+    if (track) { track.innerHTML += track.innerHTML; }
+
+    // Back-to-top button — reveal after scrolling a bit
+    var toTop = document.getElementById('to-top');
+    window.addEventListener('scroll', function () {
+      if (window.scrollY > 600) { toTop.classList.add('show'); }
+      else { toTop.classList.remove('show'); }
+    }, { passive: true });
+    toTop.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // FAQ accordion — one open at a time
+    var faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(function (item) {
+      var btn = item.querySelector('.faq-q');
+      var ans = item.querySelector('.faq-a');
+      btn.addEventListener('click', function () {
+        var isOpen = item.classList.contains('open');
+        faqItems.forEach(function (other) {
+          other.classList.remove('open');
+          other.querySelector('.faq-a').style.maxHeight = null;
+          other.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+        });
+        if (!isOpen) {
+          item.classList.add('open');
+          ans.style.maxHeight = ans.scrollHeight + 'px';
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+
+    // Count-up animation — runs once when the number scrolls into view
+    function animateCount(el) {
+      var target = parseFloat(el.getAttribute('data-count'));
+      var decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
+      var duration = 1400;
+      var start = null;
+      function tick(ts) {
+        if (!start) start = ts;
+        var p = Math.min((ts - start) / duration, 1);
+        var eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
+        el.textContent = (target * eased).toFixed(decimals);
+        if (p < 1) requestAnimationFrame(tick);
+        else el.textContent = target.toFixed(decimals);
+      }
+      requestAnimationFrame(tick);
+    }
+    var counters = document.querySelectorAll('.count');
+    if ('IntersectionObserver' in window) {
+      var co = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            animateCount(entry.target);
+            co.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.6 });
+      counters.forEach(function (el) { co.observe(el); });
+    } else {
+      counters.forEach(function (el) {
+        el.textContent = parseFloat(el.getAttribute('data-count')).toFixed(parseInt(el.getAttribute('data-decimals') || '0', 10));
+      });
+    }
+
+    // Scroll-reveal: fade + lift elements into view as they enter the viewport
+    var revealEls = document.querySelectorAll('.reveal');
+    if ('IntersectionObserver' in window) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+            io.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' });
+      revealEls.forEach(function (el) { io.observe(el); });
+    } else {
+      revealEls.forEach(function (el) { el.classList.add('in-view'); });
+    }
+
+    // Contact form — async submit to Formspree, no page reload
+    var form = document.getElementById('contact-form');
+    var success = document.getElementById('form-success');
+    var error = document.getElementById('form-error');
+    var submitBtn = form.querySelector('.btn-submit');
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (error) error.classList.remove('show');
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+
+      fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      })
+        .then(function (res) {
+          if (res.ok) {
+            showSuccess();
+          } else {
+            // Formspree returns JSON with field errors on a 4xx
+            return res.json().then(function (data) {
+              var msg = (data && data.errors && data.errors.length)
+                ? data.errors.map(function (x) { return x.message; }).join(' ')
+                : null;
+              showError(msg);
+            });
+          }
+        })
+        .catch(function () {
+          showError(null);
+        });
+    });
+
+    function showSuccess() {
+      form.style.display = 'none';
+      if (error) error.classList.remove('show');
+      success.classList.add('show');
+      success.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function showError(msg) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send message';
+      if (error) {
+        error.textContent = msg || 'Something went wrong. Please try again, or email us directly.';
+        error.classList.add('show');
+      }
+    }
+  </script>
+
+</body>
+</html>
