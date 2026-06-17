@@ -446,7 +446,147 @@
       .reveal { opacity: 1; transform: none; }
       .hero .anim { opacity: 1; transform: none; }
       .section-head h2::after { width: 64px; }
+      .marquee-track { animation: none !important; }
     }
+
+    /* ---------- Scroll progress bar ---------- */
+    .scroll-progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0;
+      background: var(--accent);
+      z-index: 100;
+      transition: width 0.1s linear;
+    }
+
+    /* ---------- Sources marquee ---------- */
+    .marquee {
+      border-top: 1px solid #1f1f1f;
+      border-bottom: 1px solid #1f1f1f;
+      padding: 26px 0;
+      overflow: hidden;
+      position: relative;
+    }
+    .marquee::before, .marquee::after {
+      content: "";
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 120px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .marquee::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
+    .marquee::after { right: 0; background: linear-gradient(270deg, var(--bg), transparent); }
+    .marquee-label {
+      text-align: center;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .marquee-track {
+      display: flex;
+      gap: 56px;
+      width: max-content;
+      animation: scroll-x 32s linear infinite;
+    }
+    .marquee:hover .marquee-track { animation-play-state: paused; }
+    .marquee-item {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(20px, 3vw, 28px);
+      color: #2e2e2e;
+      letter-spacing: -0.02em;
+      white-space: nowrap;
+      transition: color 0.2s ease;
+    }
+    .marquee-item:hover { color: var(--accent); }
+    @keyframes scroll-x {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* ---------- Count-up stat ---------- */
+    .count { font-variant-numeric: tabular-nums; }
+
+    /* ---------- FAQ accordion ---------- */
+    .faq-list {
+      max-width: 820px;
+      border-top: 1px solid #1f1f1f;
+    }
+    .faq-item { border-bottom: 1px solid #1f1f1f; }
+    .faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      text-align: left;
+      padding: 26px 4px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(18px, 2.4vw, 22px);
+      color: var(--text);
+      letter-spacing: -0.01em;
+      transition: color 0.2s ease;
+    }
+    .faq-q:hover { color: var(--accent); }
+    .faq-icon {
+      flex-shrink: 0;
+      width: 22px; height: 22px;
+      position: relative;
+    }
+    .faq-icon::before, .faq-icon::after {
+      content: "";
+      position: absolute;
+      background: var(--accent);
+      transition: transform 0.3s ease;
+    }
+    .faq-icon::before { top: 50%; left: 0; width: 100%; height: 2px; transform: translateY(-50%); }
+    .faq-icon::after { left: 50%; top: 0; width: 2px; height: 100%; transform: translateX(-50%); }
+    .faq-item.open .faq-icon::after { transform: translateX(-50%) scaleY(0); }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+    .faq-a p {
+      padding: 0 4px 26px;
+      color: var(--body);
+      font-size: 17px;
+      max-width: 680px;
+    }
+
+    /* ---------- Back to top ---------- */
+    .to-top {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: 46px; height: 46px;
+      background: var(--accent);
+      color: #0A0A0A;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(12px);
+      transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+      z-index: 70;
+    }
+    .to-top.show { opacity: 1; visibility: visible; transform: none; }
+    .to-top:hover { transform: translateY(-3px); }
 
     /* ---------- Responsive ---------- */
     @media (max-width: 860px) {
@@ -467,6 +607,9 @@
   </style>
 </head>
 <body>
+
+  <!-- Scroll progress indicator -->
+  <div class="scroll-progress" id="scroll-progress"></div>
 
   <!-- 0. Announcement bar -->
   <div class="announce">
@@ -492,6 +635,23 @@
     </div>
   </header>
 
+  <!-- 2b. Sources marquee -->
+  <div class="marquee reveal" aria-hidden="true">
+    <p class="marquee-label">Every source your team already uses</p>
+    <div class="marquee-track" id="marquee-track">
+      <span class="marquee-item">Slack</span>
+      <span class="marquee-item">Google Drive</span>
+      <span class="marquee-item">Notion</span>
+      <span class="marquee-item">Zoom</span>
+      <span class="marquee-item">Gmail</span>
+      <span class="marquee-item">Fathom</span>
+      <span class="marquee-item">Otter.ai</span>
+      <span class="marquee-item">Dropbox</span>
+      <span class="marquee-item">Confluence</span>
+      <span class="marquee-item">Loom</span>
+    </div>
+  </div>
+
   <!-- 3. Problem -->
   <section id="problem">
     <div class="container">
@@ -503,7 +663,7 @@
         </div>
         <div class="card reveal" data-delay="2">
           <span class="eyebrow">The cost</span>
-          <h3>2.5 hours lost every day</h3>
+          <h3><span class="count" data-count="2.5" data-decimals="1">0.0</span> hours lost every day</h3>
           <p>The average knowledge worker spends 2.5 hours searching for information they already have.</p>
         </div>
         <div class="card reveal" data-delay="3">
@@ -577,6 +737,45 @@
     </div>
   </section>
 
+  <!-- 5b. FAQ -->
+  <section id="faq">
+    <div class="container">
+      <div class="section-head reveal">
+        <h2>Questions, answered.</h2>
+      </div>
+      <div class="faq-list reveal">
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false">
+            How long until our wiki is live?
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-a"><p>Most agencies are up and running within two weeks of sending us their first batch of sources. The wiki keeps improving from there as you add more.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false">
+            Is our data secure and private?
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-a"><p>Every client gets a private, isolated knowledge base. Your data is never shared, never used to train public models, and access stays inside your own Notion portal.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false">
+            What do we actually have to do?
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-a"><p>Dump your files &mdash; export Slack, share Drive folders, send transcripts. No tagging, no folders, no organising. We handle the structure and the upkeep.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q" type="button" aria-expanded="false">
+            What does it cost?
+            <span class="faq-icon" aria-hidden="true"></span>
+          </button>
+          <div class="faq-a"><p>A one-time setup fee of &euro;1,500&ndash;&euro;3,000 and a monthly retainer of &euro;300&ndash;&euro;500. The first 10 agencies lock in 10% off both &mdash; forever.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- 6. Contact -->
   <section id="contact">
     <div class="container">
@@ -615,6 +814,9 @@
     </div>
   </footer>
 
+  <!-- Back to top -->
+  <button class="to-top" id="to-top" type="button" aria-label="Back to top">&uarr;</button>
+
   <script>
     // Smooth scroll for in-page anchors (progressive enhancement over CSS smooth scroll)
     document.querySelectorAll('a[href^="#"]').forEach(function (link) {
@@ -632,6 +834,83 @@
         }
       });
     });
+
+    // Scroll progress bar — width tracks how far down the page you are
+    var progress = document.getElementById('scroll-progress');
+    function updateProgress() {
+      var h = document.documentElement;
+      var scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
+      progress.style.width = (scrolled * 100) + '%';
+    }
+    window.addEventListener('scroll', updateProgress, { passive: true });
+    updateProgress();
+
+    // Marquee — duplicate the items so the loop is seamless (-50% keyframe)
+    var track = document.getElementById('marquee-track');
+    if (track) { track.innerHTML += track.innerHTML; }
+
+    // Back-to-top button — reveal after scrolling a bit
+    var toTop = document.getElementById('to-top');
+    window.addEventListener('scroll', function () {
+      if (window.scrollY > 600) { toTop.classList.add('show'); }
+      else { toTop.classList.remove('show'); }
+    }, { passive: true });
+    toTop.addEventListener('click', function () {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // FAQ accordion — one open at a time
+    var faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(function (item) {
+      var btn = item.querySelector('.faq-q');
+      var ans = item.querySelector('.faq-a');
+      btn.addEventListener('click', function () {
+        var isOpen = item.classList.contains('open');
+        faqItems.forEach(function (other) {
+          other.classList.remove('open');
+          other.querySelector('.faq-a').style.maxHeight = null;
+          other.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+        });
+        if (!isOpen) {
+          item.classList.add('open');
+          ans.style.maxHeight = ans.scrollHeight + 'px';
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+
+    // Count-up animation — runs once when the number scrolls into view
+    function animateCount(el) {
+      var target = parseFloat(el.getAttribute('data-count'));
+      var decimals = parseInt(el.getAttribute('data-decimals') || '0', 10);
+      var duration = 1400;
+      var start = null;
+      function tick(ts) {
+        if (!start) start = ts;
+        var p = Math.min((ts - start) / duration, 1);
+        var eased = 1 - Math.pow(1 - p, 3); // easeOutCubic
+        el.textContent = (target * eased).toFixed(decimals);
+        if (p < 1) requestAnimationFrame(tick);
+        else el.textContent = target.toFixed(decimals);
+      }
+      requestAnimationFrame(tick);
+    }
+    var counters = document.querySelectorAll('.count');
+    if ('IntersectionObserver' in window) {
+      var co = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            animateCount(entry.target);
+            co.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.6 });
+      counters.forEach(function (el) { co.observe(el); });
+    } else {
+      counters.forEach(function (el) {
+        el.textContent = parseFloat(el.getAttribute('data-count')).toFixed(parseInt(el.getAttribute('data-decimals') || '0', 10));
+      });
+    }
 
     // Scroll-reveal: fade + lift elements into view as they enter the viewport
     var revealEls = document.querySelectorAll('.reveal');
